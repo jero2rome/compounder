@@ -1,7 +1,7 @@
 ---
 description: "Initialize a new feature workflow with git worktree"
 argument-hint: "[feature-name]"
-allowed-tools: ["Bash(bash $CLAUDE_PLUGIN_ROOT/scripts/init-worktree.sh:*)"]
+allowed-tools: ["Bash(${CLAUDE_PLUGIN_ROOT}/scripts/init-worktree.sh)"]
 ---
 
 # Initialize Feature Workflow
@@ -23,5 +23,5 @@ Creates an isolated git worktree for a new feature development.
 ## Execute
 
 ```!
-bash "$CLAUDE_PLUGIN_ROOT/scripts/init-worktree.sh" "$ARGUMENTS"
+"${CLAUDE_PLUGIN_ROOT}/scripts/init-worktree.sh" $ARGUMENTS
 ```

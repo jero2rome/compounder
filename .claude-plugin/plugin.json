@@ -1,7 +1,7 @@
 {
   "name": "compounder",
   "description": "Fixed iterative loop plugin for Claude Code. Session-isolated, parallel-safe, multi-line prompt support. Based on the Ralph Wiggum technique.",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "author": {
     "name": "Jerome Mohanan",
     "url": "https://github.com/jero2rome"
