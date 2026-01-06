@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "jero2rome-compounder",
+  "description": "Compounder: Fixed iterative loop plugin for Claude Code",
+  "owner": {
+    "name": "Jerome Mohanan",
+    "email": "contact@jeropro.com"
+  },
+  "plugins": [
+    {
+      "name": "compounder",
+      "description": "Fixed iterative loop plugin. Session-isolated, parallel-safe, multi-line prompt support.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Jerome Mohanan",
+        "url": "https://github.com/jero2rome"
+      },
+      "source": ".",
+      "category": "development",
+      "homepage": "https://github.com/jero2rome/compounder"
+    }
+  ]
+}
