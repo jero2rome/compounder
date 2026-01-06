@@ -24,20 +24,26 @@ Compounder provides a complete idea-to-implementation workflow:
 └─────────────────┘     └─────────────────┘     └─────────────────┘
 ```
 
-| Step | Phase | Tool | Output |
-|------|-------|------|--------|
-| 1 | Ideation | `ideate` skill | Refined feature description |
-| 2 | PRD | `/speckit.specify` | spec.md |
-| 3 | Clarify | `/speckit.clarify` | Updated spec.md |
-| 4 | Plan | `/speckit.plan` | plan.md |
-| 5 | Tasks | `/speckit.tasks` | tasks.md |
-| 6 | Execute | `execute` skill | Implementation |
+| Step | Phase | Say to Claude | Output |
+|------|-------|---------------|--------|
+| 0 | Setup | "init worktree for [feature]" | Isolated worktree + branch |
+| 1 | Ideation | "let's ideate [feature]" | Refined feature description |
+| 2 | PRD | "create a spec" | spec.md |
+| 3 | Clarify | "clarify the spec" | Updated spec.md |
+| 4 | Plan | "create a plan" | plan.md |
+| 5 | Tasks | "create tasks" | tasks.md |
+| 6 | Execute | "execute the tasks" | Implementation |
 | 7 | Review | Human | Approval |
 
 ### Skills
 
-- **ideate** - Guides brainstorming to produce a clear feature description
-- **execute** - Guides autonomous task execution via compounder
+Skills are auto-invoked by Claude based on natural language. Just say:
+
+| Skill | Trigger phrases |
+|-------|-----------------|
+| **ideate** | "let's ideate", "I have an idea", "brainstorm this feature", "use compounder to ideate" |
+| **execute** | "execute the tasks", "run compounder", "start autonomous development" |
+| **init** | "initialize a worktree for X", "use compounder to init", "create a feature branch" |
 
 ### Spec-Kit Integration
 
@@ -55,7 +61,7 @@ The spec-kit-skill provides the full 7-phase workflow: constitution, specify, cl
 
 Use git worktrees for isolated feature development:
 
-1. **Initialize**: `/compounder:init "my-feature"`
+1. **Initialize**: Say "initialize a worktree for my-feature" or "use compounder to init my-feature"
    - Creates worktree at `../compounder-my-feature`
    - Creates branch `feat/my-feature`
 
@@ -64,7 +70,13 @@ Use git worktrees for isolated feature development:
    cd ../compounder-my-feature && claude
    ```
 
-3. **Run workflow**: ideate → spec-kit → execute → human review
+3. **Run workflow**: Say these to Claude in sequence:
+   - "Let's ideate [your feature]" → produces feature description
+   - "Create a spec" → spec.md
+   - "Create a plan" → plan.md
+   - "Create tasks" → tasks.md
+   - "Execute the tasks" → implementation
+   - Human review
 
 4. **After merge**: Clean up the worktree:
    ```bash
