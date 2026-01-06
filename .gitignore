@@ -1,5 +1,6 @@
 # Claude Code local files
 .claude/skills/
+.claude/compounder-*.local.md
 
 # Integration test artifacts (generated)
 integration-tests/counter-spa/

@@ -176,6 +176,72 @@ Add this to `.claude/settings.json` to auto-approve the script:
 2. Creates a branch named `feat/{feature-name}`
 3. The worktree is isolated from the main repo for safe feature development
 
+## Verified Workflow: Full Ideate-to-Execute Pipeline
+
+The complete autonomous workflow was tested and verified on 2026-01-06. Here's what worked:
+
+### What Was Tested
+Feature: `/compounder:status` command - displays current loop state
+
+### Successful Flow
+
+1. **Ideate** - "let's ideate, use the skill"
+   - Skill auto-invoked via `Skill(compounder:ideate)`
+   - Produced structured feature description with user stories, MVP scope
+
+2. **Spec-Kit Handoff** - "hand off to the spec skill"
+   - Invoked via `Skill(spec-kit-skill:spec-kit-skill)` with feature description as args
+   - First run initialized spec-kit: `specify init . --ai claude --force`
+   - Created constitution at `.specify/memory/constitution.md`
+   - Created feature branch `001-loop-status-command` via spec-kit script
+
+3. **Specify → Clarify → Plan → Tasks**
+   - Spec created at `specs/001-loop-status-command/spec.md`
+   - Clarifications added inline (ASCII-only, no emoji, no help flag)
+   - Plan created at `specs/001-loop-status-command/plan.md`
+   - Tasks created at `specs/001-loop-status-command/tasks.md` (12 tasks across 4 phases)
+
+4. **Execute** - "execute the tasks with the skills"
+   - Invoked via `Skill(compounder:execute)`
+   - Launched compound loop with calculated iterations: `(12 tasks * 2) + 5 = 29`
+   - Loop completed all tasks in single iteration
+   - Output `<promise>ALL_TASKS_COMPLETE</promise>` when done
+
+### Key Learnings
+
+| Phase | Trigger | What Happens |
+|-------|---------|--------------|
+| Ideate | "let's ideate" | Structured brainstorming, produces feature description |
+| Spec-Kit | "hand off to spec" or "create a spec" | `Skill(spec-kit-skill:spec-kit-skill)` initializes project if needed |
+| Execute | "execute the tasks" | `Skill(compounder:execute)` reads tasks.md, launches compound-loop |
+
+### Iteration Calculation
+The execute skill calculates max iterations as: `(uncompleted_tasks * 2) + 5`
+- Buffer accounts for debugging, test failures, multi-step tasks
+- Completion promise `ALL_TASKS_COMPLETE` signals loop exit
+
+### Files Generated
+```
+.specify/
+  memory/constitution.md     # Project principles
+  scripts/bash/*.sh          # Spec-kit helper scripts
+  templates/*.md             # Document templates
+
+specs/001-feature-name/
+  spec.md                    # Feature specification
+  plan.md                    # Implementation plan
+  tasks.md                   # Actionable task list
+
+.claude/commands/
+  speckit.*.md               # Spec-kit slash commands
+```
+
+### Tips for Future Runs
+- Spec-kit only needs initialization once per project
+- Constitution defines project-wide principles (shell-first, session isolation, etc.)
+- Tasks should be marked `[x]` as completed during execution
+- Use `./scripts/status.sh` to monitor loop progress (new command!)
+
 ## Git Safety Rules
 
 When working in this repository:
