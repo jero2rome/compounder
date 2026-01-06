@@ -1,5 +1,6 @@
 {
   "enabledPlugins": {
-    "compounder@jero2rome-compounder": true
+    "compounder@jero2rome-compounder": true,
+    "spec-kit-skill@claude-code-settings": true
   }
 }
