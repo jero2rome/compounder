@@ -1,7 +1,7 @@
 ---
 description: "Start a compound loop in current session"
 argument-hint: "[PROMPT] [--max-iterations N] [--completion-promise TEXT]"
-allowed-tools: ["Bash(COMPOUNDER_SESSION_ID=*setup-compound-loop.sh*:*)"]
+allowed-tools: ["Bash(*setup-compound-loop.sh*:*)"]
 hide-from-slash-command-tool: "true"
 ---
 
