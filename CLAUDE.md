@@ -134,3 +134,4 @@ When working in this repository:
 - **Never push automatically** - Always ask before pushing to remote
 - Propose commit messages for review before executing
 - This applies even when tasks seem complete - always get explicit approval
+- **Do NOT include Co-Authored-By or any AI attribution in commit messages**
