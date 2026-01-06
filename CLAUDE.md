@@ -138,6 +138,44 @@ head -10 .claude/compounder-*.local.md
 - `CLAUDE_PLUGIN_ROOT` - Path to plugin directory (set by Claude Code)
 - `COMPOUNDER_SESSION_ID` - Session ID for state file isolation (set by compound-loop command from `$SESSION_ID`)
 
+## Troubleshooting: Init Skill
+
+The `compounder:init` skill may fail with a permission error when invoked via the `Skill` tool. Here's how to handle it:
+
+### Problem
+```
+Skill: compounder:init
+Error: Bash command permission check failed
+```
+
+### Solution
+If the Skill tool fails, call the init script directly via Bash with the feature name as an argument:
+
+```bash
+# Use the plugin's script path (available via $CLAUDE_PLUGIN_ROOT)
+$CLAUDE_PLUGIN_ROOT/scripts/init-worktree.sh "feature-name"
+
+# Or from cached plugins directory
+~/.claude/plugins/cache/jero2rome-compounder/compounder/*/scripts/init-worktree.sh "feature-name"
+```
+
+### Required Permission
+Add this to `.claude/settings.json` to auto-approve the script:
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(*/scripts/init-worktree.sh:*)"
+    ]
+  }
+}
+```
+
+### What the Script Does
+1. Creates a git worktree at `../compounder-{feature-name}`
+2. Creates a branch named `feat/{feature-name}`
+3. The worktree is isolated from the main repo for safe feature development
+
 ## Verified Workflow: Full Ideate-to-Execute Pipeline
 
 The complete autonomous workflow was tested and verified on 2026-01-06. Here's what worked:
