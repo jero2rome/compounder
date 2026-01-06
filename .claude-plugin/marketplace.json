@@ -15,7 +15,7 @@
         "name": "Jerome Mohanan",
         "url": "https://github.com/jero2rome"
       },
-      "source": ".",
+      "source": "./",
       "category": "development",
       "homepage": "https://github.com/jero2rome/compounder"
     }
