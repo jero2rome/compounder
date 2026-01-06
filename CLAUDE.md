@@ -1,0 +1,62 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Overview
+
+Compounder is a Claude Code plugin that implements an iterative loop mechanism. It feeds the same prompt back after each iteration, allowing Claude to build incrementally on previous work visible in files and git history.
+
+## Architecture
+
+```
+.claude-plugin/
+  plugin.json          # Plugin metadata
+
+commands/
+  compound-loop.md     # Start loop command - calls setup-compound-loop.sh
+  cancel-compound.md   # Cancel loop command - removes state file
+  help.md              # Help command
+
+hooks/
+  hooks.json           # Registers stop-hook.sh as a Stop hook
+  stop-hook.sh         # Core loop logic - intercepts exit, feeds prompt back
+
+scripts/
+  setup-compound-loop.sh  # Creates state file, parses arguments
+```
+
+### How the Loop Works
+
+1. `/compound-loop` runs `setup-compound-loop.sh` which creates `.claude/compounder-{session_id}.local.md`
+2. State file contains: iteration count, max iterations, completion promise, and the prompt (in markdown frontmatter + body)
+3. When Claude tries to exit, `stop-hook.sh` intercepts via the Stop hook
+4. Hook reads transcript, checks completion conditions, increments iteration, outputs `{"decision": "block", "reason": PROMPT}`
+5. Loop ends when: max iterations reached, `<promise>TEXT</promise>` matches completion promise, or `/cancel-compound` removes state file
+
+### Key Design Decisions
+
+- **Session isolation**: State file includes session_id to allow parallel loops in different sessions/worktrees
+- **Multi-line prompts**: Uses stdin/heredoc instead of bash argument parsing
+- **Absolute paths**: Uses `CLAUDE_PROJECT_DIR` environment variable for reliable path resolution
+- **Promise verification**: `<promise>X</promise>` must exactly match `--completion-promise` value
+
+## Testing
+
+No automated tests. Manual testing:
+
+```bash
+# Start a loop
+/compounder:compound-loop "Your task" --max-iterations 5 --completion-promise "DONE"
+
+# Monitor state
+head -10 .claude/compounder-*.local.md
+
+# Cancel if needed
+/compounder:cancel-compound
+```
+
+## Environment Variables
+
+- `CLAUDE_PROJECT_DIR` - Absolute path to project root (set by Claude Code)
+- `CLAUDE_PLUGIN_ROOT` - Path to plugin directory (set by Claude Code)
+- `COMPOUNDER_SESSION_ID` - Session ID for state file isolation (set by compound-loop command from `$SESSION_ID`)
