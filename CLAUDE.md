@@ -51,6 +51,26 @@ Between the two skills, use the `spec-kit-skill` (steps 2-5) to transform the fe
 
 The spec-kit-skill provides the full 7-phase workflow: constitution, specify, clarify, plan, tasks, analyze, implement. See [feiskyer/claude-code-settings](https://github.com/feiskyer/claude-code-settings) for details.
 
+## Starting a New Feature
+
+Use git worktrees for isolated feature development:
+
+1. **Initialize**: `/compounder:init "my-feature"`
+   - Creates worktree at `../compounder-my-feature`
+   - Creates branch `feat/my-feature`
+
+2. **Switch session**: Open new terminal and run:
+   ```bash
+   cd ../compounder-my-feature && claude
+   ```
+
+3. **Run workflow**: ideate → spec-kit → execute → human review
+
+4. **After merge**: Clean up the worktree:
+   ```bash
+   git worktree remove ../compounder-my-feature
+   ```
+
 ## Architecture
 
 ```
