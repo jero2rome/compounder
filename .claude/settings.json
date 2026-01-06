@@ -1,6 +1,11 @@
 {
   "enabledPlugins": {
-    "compounder@jero2rome-compounder": true,
-    "spec-kit-skill@claude-code-settings": true
+    "spec-kit-skill@claude-code-settings": true,
+    "compounder@jero2rome-compounder": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(*/scripts/init-worktree.sh:*)"
+    ]
   }
 }
