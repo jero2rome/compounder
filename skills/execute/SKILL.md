@@ -1,9 +1,9 @@
 ---
-name: workflow
+name: execute
 description: Use when the user wants to execute tasks autonomously, run compounder on a tasks.md file, start autonomous development, compound through a task list, or implement tasks iteratively. Guides autonomous task execution using compound loops.
 ---
 
-# Workflow Skill
+# Execute Skill
 
 Orchestrates autonomous task execution using compounder's iterative loop mechanism.
 

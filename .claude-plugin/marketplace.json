@@ -10,7 +10,7 @@
     {
       "name": "compounder",
       "description": "Fixed iterative loop plugin. Session-isolated, parallel-safe, multi-line prompt support.",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "author": {
         "name": "Jerome Mohanan",
         "url": "https://github.com/jero2rome"

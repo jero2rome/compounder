@@ -4,7 +4,52 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Compounder is a Claude Code plugin that implements an iterative loop mechanism. It feeds the same prompt back after each iteration, allowing Claude to build incrementally on previous work visible in files and git history.
+Compounder is a Claude Code plugin that enables autonomous development workflows. It implements an iterative loop mechanism that feeds the same prompt back after each iteration, allowing Claude to build incrementally on previous work visible in files and git history.
+
+## Autonomous Development Workflow
+
+Compounder provides a complete idea-to-implementation workflow:
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  IDEATE SKILL   │     │     SPECKIT     │     │ EXECUTE SKILL   │
+│                 │     │                 │     │                 │
+│  1. Brainstorm  │────▶│  2. /specify    │────▶│  6. Execute     │
+│     idea        │     │     → spec.md   │     │     tasks via   │
+│                 │     │  3. /clarify    │     │     compounder  │
+│  Output:        │     │  4. /plan       │     │                 │
+│  Feature desc   │     │     → plan.md   │     │  7. Human       │
+│                 │     │  5. /tasks      │     │     Review      │
+│                 │     │     → tasks.md  │     │                 │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+```
+
+| Step | Phase | Tool | Output |
+|------|-------|------|--------|
+| 1 | Ideation | `ideate` skill | Refined feature description |
+| 2 | PRD | `/speckit.specify` | spec.md |
+| 3 | Clarify | `/speckit.clarify` | Updated spec.md |
+| 4 | Plan | `/speckit.plan` | plan.md |
+| 5 | Tasks | `/speckit.tasks` | tasks.md |
+| 6 | Execute | `execute` skill | Implementation |
+| 7 | Review | Human | Approval |
+
+### Skills
+
+- **ideate** - Guides brainstorming to produce a clear feature description
+- **execute** - Guides autonomous task execution via compounder
+
+### Spec-Kit Integration
+
+Between the two skills, use the `spec-kit-skill` (steps 2-5) to transform the feature description into executable tasks.
+
+**Install spec-kit-skill:**
+```bash
+/plugin marketplace add feiskyer/claude-code-settings
+/plugin install spec-kit-skill
+```
+
+The spec-kit-skill provides the full 7-phase workflow: constitution, specify, clarify, plan, tasks, analyze, implement. See [feiskyer/claude-code-settings](https://github.com/feiskyer/claude-code-settings) for details.
 
 ## Architecture
 
@@ -60,3 +105,12 @@ head -10 .claude/compounder-*.local.md
 - `CLAUDE_PROJECT_DIR` - Absolute path to project root (set by Claude Code)
 - `CLAUDE_PLUGIN_ROOT` - Path to plugin directory (set by Claude Code)
 - `COMPOUNDER_SESSION_ID` - Session ID for state file isolation (set by compound-loop command from `$SESSION_ID`)
+
+## Git Safety Rules
+
+When working in this repository:
+
+- **Never commit automatically** - Always propose commits and wait for user approval
+- **Never push automatically** - Always ask before pushing to remote
+- Propose commit messages for review before executing
+- This applies even when tasks seem complete - always get explicit approval
