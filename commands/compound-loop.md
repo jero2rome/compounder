@@ -1,7 +1,7 @@
 ---
 description: "Start a compound loop in current session"
 argument-hint: "[PROMPT] [--max-iterations N] [--completion-promise TEXT]"
-allowed-tools: ["Bash(${CLAUDE_PLUGIN_ROOT}/scripts/setup-compound-loop.sh:*)"]
+allowed-tools: ["Bash(**/scripts/setup-compound-loop.sh:*)"]
 hide-from-slash-command-tool: "true"
 ---
 
