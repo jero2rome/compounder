@@ -1,6 +1,6 @@
 ---
-description: Create or update the feature specification from a natural language feature description.
-handoffs: 
+description: Create or update the feature specification using Claude's native analysis, then structure into spec.md.
+handoffs:
   - label: Build Technical Plan
     agent: speckit.plan
     prompt: Create a plan for the spec. I am building with...
@@ -18,13 +18,36 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
+## Philosophy
+
+This command uses **Claude Code's native analysis capabilities** to understand the feature in context of the existing codebase, then structures the output into spec-kit's spec.md format.
+
 ## Outline
 
-The text the user typed after `/speckit.specify` in the triggering message **is** the feature description. Assume you always have it available in this conversation even if `$ARGUMENTS` appears literally below. Do not ask the user to repeat it unless they provided an empty command.
+The text the user typed after `/speckit.specify` in the triggering message **is** the feature description.
 
-Given that feature description, do this:
+### 1. Understand the Feature Request
 
-1. **Generate a concise short name** (2-4 words) for the branch:
+Parse the feature description to identify:
+- Core user need / problem being solved
+- Key actors / user types
+- Expected outcomes
+
+### 2. Explore the Codebase (Claude-Native Analysis)
+
+**CRITICAL**: Before writing the spec, use Claude's native exploration capabilities to understand context:
+
+Use the **Task tool with subagent_type=Explore** to:
+- Find existing patterns that relate to this feature
+- Understand the current architecture
+- Identify similar features already implemented
+- Find constraints or conventions to follow
+
+This ensures the spec aligns with how the codebase actually works, not theoretical patterns.
+
+### 3. Generate Branch Name
+
+Generate a concise short name (2-4 words) for the branch:
    - Analyze the feature description and extract the most meaningful keywords
    - Create a 2-4 word short name that captures the essence of the feature
    - Use action-noun format when possible (e.g., "add-user-auth", "fix-payment-bug")
@@ -36,7 +59,9 @@ Given that feature description, do this:
      - "Create a dashboard for analytics" → "analytics-dashboard"
      - "Fix payment processing timeout bug" → "fix-payment-timeout"
 
-2. **Check for existing branches before creating new one**:
+### 4. Check for Existing Branches
+
+Before creating new one:
 
    a. First, fetch all remote branches to ensure we have the latest information:
 
@@ -68,9 +93,13 @@ Given that feature description, do this:
    - The JSON output will contain BRANCH_NAME and SPEC_FILE paths
    - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot")
 
-3. Load `.specify/templates/spec-template.md` to understand required sections.
+### 5. Load Template
 
-4. Follow this execution flow:
+Load `.specify/templates/spec-template.md` to understand required sections.
+
+### 6. Write Specification (Claude-Native Analysis)
+
+Use your codebase exploration from step 2 to inform the spec. Follow this execution flow:
 
     1. Parse user description from Input
        If empty: ERROR "No feature description provided"
@@ -96,9 +125,13 @@ Given that feature description, do this:
     7. Identify Key Entities (if data involved)
     8. Return: SUCCESS (spec ready for planning)
 
-5. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
+### 7. Write to File
 
-6. **Specification Quality Validation**: After writing the initial spec, validate it against quality criteria:
+Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
+
+### 8. Quality Validation
+
+After writing the initial spec, validate it against quality criteria:
 
    a. **Create Spec Quality Checklist**: Generate a checklist file at `FEATURE_DIR/checklists/requirements.md` using the checklist template structure with these validation items:
 
@@ -190,11 +223,17 @@ Given that feature description, do this:
 
    d. **Update Checklist**: After each validation iteration, update the checklist file with current pass/fail status
 
-7. Report completion with branch name, spec file path, checklist results, and readiness for the next phase (`/speckit.clarify` or `/speckit.plan`).
+### 9. Report
+
+Report completion with branch name, spec file path, checklist results, and readiness for the next phase (`/speckit.clarify` or `/speckit.plan`).
 
 **NOTE:** The script creates and checks out the new branch and initializes the spec file before writing.
 
-## General Guidelines
+## Key Principles
+
+- **Claude-first**: Use native exploration to understand codebase before writing spec
+- **Context-aware**: Specs should reflect how the codebase actually works
+- **User-focused**: Focus on WHAT users need and WHY, not HOW
 
 ## Quick Guidelines
 

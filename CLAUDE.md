@@ -45,9 +45,21 @@ Skills are auto-invoked by Claude based on natural language. Just say:
 | **execute** | "execute the tasks", "run compounder", "start autonomous development" |
 | **init** | "initialize a worktree for X", "use compounder to init", "create a feature branch" |
 
-### Spec-Kit Integration
+### Spec-Kit Integration (Claude-First Approach)
 
 Between the two skills, use the `spec-kit-skill` (steps 2-5) to transform the feature description into executable tasks.
+
+**Philosophy: Claude-First, Spec-Kit for Structure**
+
+The workflow uses Claude Code's native capabilities as the primary mechanism:
+
+| Phase | Claude Native Capability | Spec-Kit Role |
+|-------|-------------------------|---------------|
+| Specify | Task(Explore) to understand codebase | Output format (spec.md) |
+| Plan | **EnterPlanMode** for deep planning | Output format (plan.md) |
+| Tasks | Native task breakdown analysis | Output format (tasks.md) |
+
+**Key Principle**: Spec-kit provides workflow structure and file formats. Claude Code's native tools (plan mode, codebase exploration, deep analysis) do all the substantive thinking.
 
 **Install spec-kit-skill:**
 ```bash
@@ -55,7 +67,32 @@ Between the two skills, use the `spec-kit-skill` (steps 2-5) to transform the fe
 /plugin install spec-kit-skill
 ```
 
-The spec-kit-skill provides the full 7-phase workflow: constitution, specify, clarify, plan, tasks, analyze, implement. See [feiskyer/claude-code-settings](https://github.com/feiskyer/claude-code-settings) for details.
+### Deep Planning with EnterPlanMode
+
+The `/speckit.plan` command now triggers Claude Code's native plan mode:
+
+```
+User: "create a plan"
+  ↓
+Claude: Uses EnterPlanMode tool
+  ↓
+Claude explores codebase:
+  - Analyzes existing patterns
+  - Evaluates multiple approaches
+  - Identifies risks and trade-offs
+  - Makes architectural decisions
+  ↓
+Claude exits plan mode with decisions
+  ↓
+Decisions structured into plan.md format
+```
+
+**What plan mode provides that procedural planning doesn't:**
+- Explores alternatives before committing
+- Documents rationale for decisions
+- Considers codebase context
+- Identifies risks proactively
+- Adapts approach based on findings
 
 ## Starting a New Feature
 
