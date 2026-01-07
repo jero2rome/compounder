@@ -94,6 +94,34 @@ ios/ or android/
 **Structure Decision**: [Document the selected structure and reference the real
 directories captured above]
 
+## Decisions & Rationale
+
+> **Generated from Claude Code's deep planning mode (EnterPlanMode)**
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| [Architecture approach] | [Selected option] | [Why this was chosen] |
+| [Technology choice] | [Selected option] | [Why this was chosen] |
+| [Pattern/convention] | [Selected option] | [Why this was chosen] |
+
+## Alternatives Considered
+
+> **Document what was explored during planning and why it wasn't selected**
+
+| Alternative | Why Not Selected | When It Might Be Reconsidered |
+|-------------|------------------|-------------------------------|
+| [Option A] | [Reasoning] | [Under what conditions] |
+| [Option B] | [Reasoning] | [Under what conditions] |
+
+## Risks & Mitigations
+
+> **Identified during deep planning exploration**
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| [Technical risk] | High/Med/Low | High/Med/Low | [How to address] |
+| [Integration risk] | High/Med/Low | High/Med/Low | [How to address] |
+
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**

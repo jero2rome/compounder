@@ -1,6 +1,6 @@
 ---
-description: Execute the implementation planning workflow using the plan template to generate design artifacts.
-handoffs: 
+description: Execute deep planning using Claude Code's native plan mode, then structure output into plan.md.
+handoffs:
   - label: Create Tasks
     agent: speckit.tasks
     prompt: Break the plan into tasks
@@ -18,72 +18,120 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
+## Philosophy
+
+This command uses **Claude Code's native planning capabilities first**, then structures the output into spec-kit's plan.md format. The procedural checklist approach is replaced with deep exploration and analysis.
+
 ## Outline
 
-1. **Setup**: Run `.specify/scripts/bash/setup-plan.sh --json` from repo root and parse JSON for FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+### 1. Setup
 
-2. **Load context**: Read FEATURE_SPEC and `.specify/memory/constitution.md`. Load IMPL_PLAN template (already copied).
+Run `.specify/scripts/bash/setup-plan.sh --json` from repo root and parse JSON for FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH.
 
-3. **Execute plan workflow**: Follow the structure in IMPL_PLAN template to:
-   - Fill Technical Context (mark unknowns as "NEEDS CLARIFICATION")
-   - Fill Constitution Check section from constitution
-   - Evaluate gates (ERROR if violations unjustified)
-   - Phase 0: Generate research.md (resolve all NEEDS CLARIFICATION)
-   - Phase 1: Generate data-model.md, contracts/, quickstart.md
-   - Phase 1: Update agent context by running the agent script
-   - Re-evaluate Constitution Check post-design
+### 2. Load Context
 
-4. **Stop and report**: Command ends after Phase 2 planning. Report branch, IMPL_PLAN path, and generated artifacts.
+Read these files to understand what needs to be planned:
+- FEATURE_SPEC (the spec.md for this feature)
+- `.specify/memory/constitution.md` (project principles)
 
-## Phases
+### 3. Enter Deep Planning Mode
 
-### Phase 0: Outline & Research
+**CRITICAL**: Use the `EnterPlanMode` tool to initiate Claude Code's native deep planning.
 
-1. **Extract unknowns from Technical Context** above:
-   - For each NEEDS CLARIFICATION → research task
-   - For each dependency → best practices task
-   - For each integration → patterns task
+This triggers algorithmic exploration rather than procedural template-filling:
+- Explore the codebase to understand existing patterns
+- Analyze multiple architectural approaches
+- Evaluate trade-offs (performance, maintainability, complexity)
+- Identify risks and mitigation strategies
+- Consider how this feature integrates with existing code
 
-2. **Generate and dispatch research agents**:
+### 4. Deep Planning Analysis
 
-   ```text
-   For each unknown in Technical Context:
-     Task: "Research {unknown} for {feature context}"
-   For each technology choice:
-     Task: "Find best practices for {tech} in {domain}"
-   ```
+While in plan mode, explore and analyze:
 
-3. **Consolidate findings** in `research.md` using format:
-   - Decision: [what was chosen]
-   - Rationale: [why chosen]
-   - Alternatives considered: [what else evaluated]
+**Architecture Exploration**
+- What are the possible approaches to implement this feature?
+- What patterns already exist in the codebase that should be followed?
+- What are the trade-offs between different approaches?
+- Which approach best fits the project's constitution?
 
-**Output**: research.md with all NEEDS CLARIFICATION resolved
+**Technical Analysis**
+- What dependencies are needed? Are there existing ones to leverage?
+- What is the data model? How does it relate to existing entities?
+- What APIs/interfaces are needed?
+- What are the performance implications?
 
-### Phase 1: Design & Contracts
+**Risk Assessment**
+- What could go wrong?
+- What are the unknowns that need research?
+- What assumptions are being made?
+- What are the dependencies on external systems?
 
-**Prerequisites:** `research.md` complete
+**Integration Analysis**
+- How does this feature connect to existing code?
+- What existing tests need updating?
+- What documentation needs updating?
 
-1. **Extract entities from feature spec** → `data-model.md`:
-   - Entity name, fields, relationships
-   - Validation rules from requirements
-   - State transitions if applicable
+### 5. Capture Planning Decisions
 
-2. **Generate API contracts** from functional requirements:
-   - For each user action → endpoint
-   - Use standard REST/GraphQL patterns
-   - Output OpenAPI/GraphQL schema to `/contracts/`
+After exploration, document your findings:
 
-3. **Agent context update**:
-   - Run `.specify/scripts/bash/update-agent-context.sh claude`
-   - These scripts detect which AI agent is in use
-   - Update the appropriate agent-specific context file
-   - Add only new technology from current plan
-   - Preserve manual additions between markers
+**Decisions Made**
+- Architecture approach selected and WHY
+- Technologies/dependencies chosen and WHY
+- Patterns to follow and WHY
 
-**Output**: data-model.md, /contracts/*, quickstart.md, agent-specific file
+**Alternatives Rejected**
+- Other approaches considered
+- Why they were not selected
+- Under what conditions they might be reconsidered
 
-## Key rules
+**Risks Identified**
+- Technical risks with mitigation plans
+- Integration risks
+- Performance risks
 
-- Use absolute paths
-- ERROR on gate failures or unresolved clarifications
+### 6. Exit Plan Mode
+
+Use `ExitPlanMode` when you have:
+- Explored the codebase thoroughly
+- Analyzed multiple approaches
+- Made architectural decisions with rationale
+- Identified risks and mitigations
+- Determined the implementation strategy
+
+### 7. Structure into plan.md
+
+Take your planning analysis and structure it into the plan.md template at IMPL_PLAN:
+
+- **Summary**: Primary requirement + chosen technical approach with rationale
+- **Technical Context**: Concrete decisions (not "NEEDS CLARIFICATION" - resolve unknowns during planning)
+- **Constitution Check**: Validate against project principles
+- **Project Structure**: Concrete file layout based on codebase analysis
+- **Decisions & Rationale**: NEW SECTION - document why choices were made
+- **Alternatives Considered**: NEW SECTION - what else was evaluated
+- **Risks & Mitigations**: NEW SECTION - identified risks and plans
+
+### 8. Generate Supporting Artifacts
+
+Based on your deep planning analysis, create:
+- `research.md` - Document any research findings
+- `data-model.md` - Entity definitions (if applicable)
+- `contracts/` - API specifications (if applicable)
+
+### 9. Report
+
+Output:
+- Branch name
+- Path to plan.md
+- Key architectural decisions made
+- Risks identified
+- Ready for `/speckit.tasks`
+
+## Key Principles
+
+- **Claude-first**: Use native planning capabilities, not procedural checklists
+- **Explore before deciding**: Analyze codebase patterns before making architectural choices
+- **Document rationale**: Every decision needs a "why"
+- **Resolve unknowns**: Don't leave "NEEDS CLARIFICATION" - research during planning
+- **Constitution alignment**: Ensure decisions follow project principles
